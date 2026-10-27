@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+import subprocess
+import sys
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -13,6 +15,52 @@ from typing import Optional
 ZEROGPT_URL = "https://www.zerogpt.com/"
 # Лимит сайта ZeroGPT для вставки текста в браузере (~15k символов).
 ZEROGPT_MAX_CHARS = 15_000
+
+_chromium_ready: bool | None = None
+
+
+def ensure_playwright_chromium(*, force: bool = False) -> tuple[bool, str]:
+    """Поставить пакет playwright (если надо) и скачать chromium.
+
+    На Streamlit Community Cloud браузер не ставится вместе с pip — качаем при первом check.
+    """
+    global _chromium_ready
+    if _chromium_ready is True and not force:
+        return True, "chromium already ready"
+
+    try:
+        from playwright.sync_api import sync_playwright  # noqa: F401
+    except ImportError:
+        try:
+            subprocess.run(
+                [sys.executable, "-m", "pip", "install", "playwright==1.49.0"],
+                check=True,
+                timeout=300,
+                capture_output=True,
+                text=True,
+            )
+        except Exception as exc:  # noqa: BLE001
+            _chromium_ready = False
+            return False, f"pip install playwright failed: {exc}"
+
+    try:
+        r = subprocess.run(
+            [sys.executable, "-m", "playwright", "install", "chromium"],
+            check=False,
+            timeout=420,
+            capture_output=True,
+            text=True,
+        )
+        if r.returncode != 0:
+            err = (r.stderr or r.stdout or "").strip()[-500:]
+            _chromium_ready = False
+            return False, f"playwright install chromium failed: {err or r.returncode}"
+    except Exception as exc:  # noqa: BLE001
+        _chromium_ready = False
+        return False, f"playwright install chromium error: {exc}"
+
+    _chromium_ready = True
+    return True, "chromium installed"
 
 
 @dataclass
@@ -78,6 +126,17 @@ def check_text_via_browser(
             ),
             source="browser",
         )
+    ok_pw, pw_msg = ensure_playwright_chromium()
+    if not ok_pw:
+        return ZeroGPTResult(
+            ok=False,
+            error=(
+                f"Playwright/Chromium недоступен: {pw_msg}. "
+                "Пока можно вставить подсвеченные предложения вручную."
+            ),
+            source="browser",
+        )
+
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -94,14 +153,23 @@ def check_text_via_browser(
         with sync_playwright() as p:
             browser = None
             last_err: Exception | None = None
+            # Сначала bundled chromium (Cloud), потом системные Chrome/Edge
             for launcher in (
+                lambda: p.chromium.launch(headless=headless),
                 lambda: p.chromium.launch(headless=headless, channel="chrome"),
                 lambda: p.chromium.launch(headless=headless, channel="msedge"),
-                lambda: p.chromium.launch(headless=headless),
             ):
                 try:
                     browser = launcher()
                     break
+                except Exception as exc:  # noqa: BLE001
+                    last_err = exc
+                    browser = None
+            if browser is None:
+                # ещё одна попытка доустановить chromium
+                ensure_playwright_chromium(force=True)
+                try:
+                    browser = p.chromium.launch(headless=headless)
                 except Exception as exc:  # noqa: BLE001
                     last_err = exc
                     browser = None

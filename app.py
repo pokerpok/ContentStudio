@@ -1278,6 +1278,19 @@ def site_pages_flow() -> None:
                     value=True,
                     key=f"zg_headless_{pid}",
                 )
+                if st.button(
+                    "Установить / починить Playwright Chromium",
+                    key=f"zg_install_pw_{pid}",
+                    help="Нужно один раз на Cloud после деплоя, если ZeroGPT пишет про Playwright.",
+                ):
+                    from src.content.zerogpt import ensure_playwright_chromium
+
+                    with st.spinner("playwright install chromium… (1–3 мин)"):
+                        ok_pw, msg_pw = ensure_playwright_chromium(force=True)
+                    if ok_pw:
+                        st.success(msg_pw)
+                    else:
+                        st.error(msg_pw)
                 zg_manual = st.text_area(
                     "Ручные highlights (если браузер недоступен)",
                     height=100,
@@ -1305,7 +1318,9 @@ def site_pages_flow() -> None:
                         from src.content.zerogpt import check_text_via_browser
 
                         body = str(drafts.get(zg_sid) or "")
-                        with st.spinner("ZeroGPT…"):
+                        with st.spinner(
+                            "ZeroGPT… (если первый раз — качаем Chromium)"
+                        ):
                             zg = check_text_via_browser(
                                 body, headless=bool(zg_headless)
                             )

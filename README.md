@@ -67,6 +67,7 @@ HYDRA_API_KEY = "sk-hydra-ai-..."
 
 4. Deploy.
 
-На Community Cloud **ZeroGPT (Playwright) отключён в зависимостях** — билд иначе часто падает на apt. Локально: `pip install -r requirements-dev.txt` и `playwright install chromium`.
+ZeroGPT: при первом check приложение само ставит Chromium (`playwright install chromium`).
+Если билд Cloud снова упадёт на `packages.txt` — напишите, откатим apt-зависимости.
 
 См. также `DEPLOY_CLOUDFLARE.md` (Containers / Paid plan).

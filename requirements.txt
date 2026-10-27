@@ -1,4 +1,5 @@
-# Cloud-safe: без playwright/apt (иначе Community Cloud часто валит билд)
 streamlit>=1.32.0,<1.50.0
 requests>=2.31.0
 python-dotenv>=1.0.0
+# Pin: на Community Cloud новые версии Playwright требуют libs, которых нет в apt
+playwright==1.49.0
