@@ -1,0 +1,47 @@
+{
+  "id": "site_page",
+  "name": "Internal site pages (universal + anti-AI)",
+  "description": "Генерация внутренней страницы: brief + page spec. Поддержка existing_copy (URL/текст) и посекционного пайплайна outline → section → assemble.",
+  "terms_key": "site_page",
+  "user_prompt": "site_page_user.md",
+  "system_prompt": "site_page_system.md",
+  "output_subdir": "site_page",
+  "extract_hands": false,
+  "include_anti_ai": true,
+  "project_brief": "default",
+  "mode": "site_page",
+  "phase_prompts": {
+    "outline": {
+      "system": "site_page_outline_system.md",
+      "user": "site_page_outline_user.md"
+    },
+    "section": {
+      "system": "site_page_section_system.md",
+      "user": "site_page_section_user.md"
+    },
+    "antia_pass": {
+      "system": "site_page_antia_pass_system.md",
+      "user": "site_page_antia_pass_user.md"
+    },
+    "zerogpt_fix": {
+      "system": "site_page_zerogpt_fix_system.md",
+      "user": "site_page_zerogpt_fix_user.md"
+    },
+    "sentence_step": {
+      "system": "site_page_sentence_system.md",
+      "user": "site_page_sentence_user.md"
+    },
+    "paragraph_step": {
+      "system": "site_page_paragraph_system.md",
+      "user": "site_page_paragraph_user.md"
+    },
+    "clean_copy": {
+      "system": "site_page_clean_copy_system.md",
+      "user": "site_page_clean_copy_user.md"
+    },
+    "enrich_outline": {
+      "system": "site_page_enrich_outline_system.md",
+      "user": "site_page_enrich_outline_user.md"
+    }
+  }
+}

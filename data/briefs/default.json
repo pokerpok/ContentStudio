@@ -1,0 +1,40 @@
+{
+  "id": "default",
+  "brand_name": "Your Brand",
+  "site_url": "https://example.com/",
+  "site_type": "content_site",
+  "voice": "clear_practical",
+  "default_locale": "en",
+  "focus_markets": [],
+  "product_priority": [],
+  "adjacent_products": [],
+  "out_of_scope_default": [
+    "unverified_claims",
+    "competitor_bashing",
+    "legal_advice_without_source"
+  ],
+  "audience": "Readers arriving from search or internal navigation; they need a clear job done on this URL.",
+  "objection_policy": "Address trust and process questions with checklists and verified facts. Do not invent numbers or guarantees.",
+  "compliance": {
+    "vertical": "general",
+    "require_age_gate_copy": false,
+    "age_label": "",
+    "forbid_unverified_claims": [
+      "fees_limits_timelines",
+      "guarantees",
+      "licenses_without_source"
+    ]
+  },
+  "ia_rules": [
+    "One URL = one user job; avoid near-duplicate landings.",
+    "Prefer strengthening existing hubs over parallel new URLs.",
+    "Numbers for limits/fees/timelines only from verified facts or placeholders.",
+    "Internal links use root-relative paths like /en/..."
+  ],
+  "style_notes": [
+    "Clear, practical, adult tone.",
+    "Process over hype.",
+    "Match the page job; do not pad with generic filler."
+  ],
+  "package_ref": ""
+}

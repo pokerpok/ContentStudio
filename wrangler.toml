@@ -1,0 +1,26 @@
+name = "content-studio"
+main = "worker/src/index.ts"
+compatibility_date = "2026-10-11"
+compatibility_flags = ["nodejs_compat"]
+account_id = "b597e3b60eba0e17d1cbeb47ea07e77b"
+
+[vars]
+# Несекретные флаги; ключи LLM — через secrets / dashboard
+APP_NAME = "Content Studio"
+
+[[containers]]
+class_name = "ContentStudioContainer"
+image = "./Dockerfile"
+max_instances = 1
+
+[[durable_objects.bindings]]
+name = "CONTENT_STUDIO"
+class_name = "ContentStudioContainer"
+
+[exports.ContentStudioContainer]
+type = "durable-object"
+storage = "sqlite"
+
+# Секреты (после апгрейда плана):
+#   npx wrangler secret put DEEPSEEK_API_KEY
+#   npx wrangler secret put HYDRA_API_KEY
