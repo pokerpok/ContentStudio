@@ -53,30 +53,8 @@ def _load_cloud_secrets() -> None:
             os.environ.setdefault(key, str(val).strip())
 
 
-def _ensure_playwright_browser() -> None:
-    """На Community Cloud браузер Playwright не ставится из pip — докачиваем chromium."""
-    marker = ROOT / ".playwright_ready"
-    if marker.exists():
-        return
-    try:
-        import subprocess
-
-        subprocess.run(
-            [sys.executable, "-m", "playwright", "install", "chromium"],
-            check=False,
-            timeout=420,
-            capture_output=True,
-        )
-        marker.write_text("ok", encoding="utf-8")
-    except Exception:
-        pass
-
-
 def init_state() -> None:
     _load_cloud_secrets()
-    if "playwright_boot" not in st.session_state:
-        _ensure_playwright_browser()
-        st.session_state.playwright_boot = True
     if "llm_cfg" not in st.session_state:
         cfg = load_settings()
         if not cfg.api_key:

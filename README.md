@@ -65,8 +65,8 @@ DEEPSEEK_API_KEY = "sk-..."
 HYDRA_API_KEY = "sk-hydra-ai-..."
 ```
 
-4. Deploy. Первый старт дольше (Playwright chromium).
+4. Deploy.
 
-ZeroGPT на Cloud может быть нестабилен (браузер в sandbox); остальной флоу LLM работает.
+На Community Cloud **ZeroGPT (Playwright) отключён в зависимостях** — билд иначе часто падает на apt. Локально: `pip install -r requirements-dev.txt` и `playwright install chromium`.
 
 См. также `DEPLOY_CLOUDFLARE.md` (Containers / Paid plan).
