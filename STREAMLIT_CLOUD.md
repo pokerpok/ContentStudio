@@ -1,28 +1,28 @@
 # Streamlit Community Cloud
 
-## Важно: Python 3.12 (не 3.14)
+## Сейчас в `requirements.txt` НЕТ Playwright
 
-Сейчас Cloud по умолчанию может поставить **Python 3.14**.  
-Playwright → `greenlet` на 3.14 **не собирается** (ошибка `_PyInterpreterFrame` / wheel).
+На **Python 3.14** Cloud ломает установку `greenlet` (зависимость Playwright).  
+Поэтому дефолтный деплой — без Playwright: LLM-флоу работает, ZeroGPT — ручные highlights.
 
-### Что сделать
+## Вариант A — быстрый деплой (без ZeroGPT-браузера)
 
-1. В share.streamlit.io **удали** текущее приложение.
-2. **New app** → repo `pokerpok/ContentStudio`, branch `main`, file `app.py`.
-3. Открой **Advanced settings**.
-4. **Python version → 3.12** (обязательно).
-5. Secrets:
+1. Reboot / Redeploy текущего app (после пуша без playwright).
+2. Secrets:
 
 ```toml
 DEEPSEEK_API_KEY = "..."
 HYDRA_API_KEY = "..."
 ```
 
-6. **Deploy**.
+## Вариант B — с Playwright / ZeroGPT
 
-Версию Python после деплоя **нельзя сменить** — только удалить и задеплоить заново  
-(см. [docs](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app/upgrade-python)).
+1. **Удали** app.
+2. **New app** → `pokerpok/ContentStudio`, branch `main`, `app.py`.
+3. **Advanced settings → Python version = 3.12** (не 3.14!).
+4. Secrets + Deploy.
+5. В репо временно сделай `requirements.txt` = содержимое `requirements-playwright.txt`  
+   (или скажи агенту — вернём playwright в дефолт под 3.12).
+6. В UI: **«Установить / починить Playwright Chromium»**.
 
-## После успешного билда
-
-В приложении: **«Установить / починить Playwright Chromium»** один раз, затем ZeroGPT.
+Версию Python после деплоя **нельзя сменить** — только удалить и задеплоить заново.
