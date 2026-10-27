@@ -1,5 +1,5 @@
+# Без playwright: на Python 3.14 (дефолт Cloud) падает сборка greenlet.
+# Playwright только при Python 3.12 — см. requirements-playwright.txt + STREAMLIT_CLOUD.md
 streamlit>=1.32.0,<1.50.0
 requests>=2.31.0
 python-dotenv>=1.0.0
-# Pin: на Community Cloud новые версии Playwright требуют libs, которых нет в apt
-playwright==1.49.0

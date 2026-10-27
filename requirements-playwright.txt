@@ -1,0 +1,4 @@
+# Ставить ТОЛЬКО если в Streamlit Cloud Advanced settings выбран Python 3.12
+# (или локально: pip install -r requirements-playwright.txt && playwright install chromium)
+-r requirements.txt
+playwright==1.49.0
