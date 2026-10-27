@@ -53,21 +53,22 @@ python -m pytest tests -q
 
 ## Streamlit Community Cloud
 
-1. Репозиторий на GitHub (этот проект).
-2. [share.streamlit.io](https://share.streamlit.io) → **New app**
-   - Repository: ваш fork/clone
-   - Branch: `master` (или `main`)
+Подробно: [`STREAMLIT_CLOUD.md`](STREAMLIT_CLOUD.md).
+
+**Критично:** в Advanced settings выбери **Python 3.12** (не 3.14).  
+На 3.14 Playwright/`greenlet` падает при сборке.
+
+1. [share.streamlit.io](https://share.streamlit.io) → **New app**
+   - Repository: `pokerpok/ContentStudio`
+   - Branch: `main`
    - Main file: `app.py`
-3. **Advanced settings → Secrets** (TOML):
+2. **Advanced settings** → Python **3.12** + Secrets:
 
 ```toml
 DEEPSEEK_API_KEY = "sk-..."
 HYDRA_API_KEY = "sk-hydra-ai-..."
 ```
 
-4. Deploy.
-
-ZeroGPT: при первом check приложение само ставит Chromium (`playwright install chromium`).
-Если билд Cloud снова упадёт на `packages.txt` — напишите, откатим apt-зависимости.
+3. Deploy. Если Python уже 3.14 — **удали app и задеплой заново** с 3.12.
 
 См. также `DEPLOY_CLOUDFLARE.md` (Containers / Paid plan).
