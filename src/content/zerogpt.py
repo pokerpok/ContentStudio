@@ -20,9 +20,12 @@ _chromium_ready: bool | None = None
 
 
 def ensure_playwright_chromium(*, force: bool = False) -> tuple[bool, str]:
-    """Поставить пакет playwright (если надо) и скачать chromium.
+    """Скачать Chromium, если пакет playwright уже установлен.
 
-    На Streamlit Community Cloud браузер не ставится вместе с pip — качаем при первом check.
+    На Streamlit Community Cloud:
+    - Python 3.14 → playwright/greenlet не ставится (ни в requirements, ни через pip).
+    - pip install в рантайме запрещён/бесполезен — пакет должен быть в requirements
+      при деплое на Python 3.12 (см. requirements-playwright.txt).
     """
     global _chromium_ready
     if _chromium_ready is True and not force:
@@ -31,17 +34,14 @@ def ensure_playwright_chromium(*, force: bool = False) -> tuple[bool, str]:
     try:
         from playwright.sync_api import sync_playwright  # noqa: F401
     except ImportError:
-        try:
-            subprocess.run(
-                [sys.executable, "-m", "pip", "install", "playwright==1.49.0"],
-                check=True,
-                timeout=300,
-                capture_output=True,
-                text=True,
-            )
-        except Exception as exc:  # noqa: BLE001
-            _chromium_ready = False
-            return False, f"pip install playwright failed: {exc}"
+        _chromium_ready = False
+        return (
+            False,
+            "Пакет playwright не установлен в окружении. "
+            "На Streamlit Cloud нужен Python 3.12 + requirements-playwright.txt "
+            "(на 3.14 greenlet не собирается). "
+            "Пока используйте ручные highlights ниже.",
+        )
 
     try:
         r = subprocess.run(
@@ -126,25 +126,27 @@ def check_text_via_browser(
             ),
             source="browser",
         )
-    ok_pw, pw_msg = ensure_playwright_chromium()
-    if not ok_pw:
-        return ZeroGPTResult(
-            ok=False,
-            error=(
-                f"Playwright/Chromium недоступен: {pw_msg}. "
-                "Пока можно вставить подсвеченные предложения вручную."
-            ),
-            source="browser",
-        )
-
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
         return ZeroGPTResult(
             ok=False,
             error=(
-                "Нужен Playwright: pip install playwright && playwright install chromium. "
-                "Пока можно вставить подсвеченные предложения вручную."
+                "Playwright не в окружении Cloud (нужен Python 3.12 + "
+                "requirements-playwright.txt). "
+                "Вставьте жёлтые предложения вручную в поле ниже и нажмите "
+                "«Редакторский проход»."
+            ),
+            source="browser",
+        )
+
+    ok_pw, pw_msg = ensure_playwright_chromium()
+    if not ok_pw:
+        return ZeroGPTResult(
+            ok=False,
+            error=(
+                f"Chromium недоступен: {pw_msg}. "
+                "Пока вставьте подсвеченные предложения вручную."
             ),
             source="browser",
         )

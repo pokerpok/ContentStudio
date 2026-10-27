@@ -1278,14 +1278,24 @@ def site_pages_flow() -> None:
                     value=True,
                     key=f"zg_headless_{pid}",
                 )
-                if st.button(
-                    "Установить / починить Playwright Chromium",
+                st.caption(
+                    "Браузерный ZeroGPT на Streamlit Cloud работает только при "
+                    "**Python 3.12** и `requirements-playwright.txt`. "
+                    "Иначе — ручные highlights → «Редакторский проход»."
+                )
+                try:
+                    import playwright  # noqa: F401
+
+                    _pw_ok = True
+                except ImportError:
+                    _pw_ok = False
+                if _pw_ok and st.button(
+                    "Докачать Chromium (если playwright уже в окружении)",
                     key=f"zg_install_pw_{pid}",
-                    help="Нужно один раз на Cloud после деплоя, если ZeroGPT пишет про Playwright.",
                 ):
                     from src.content.zerogpt import ensure_playwright_chromium
 
-                    with st.spinner("playwright install chromium… (1–3 мин)"):
+                    with st.spinner("playwright install chromium…"):
                         ok_pw, msg_pw = ensure_playwright_chromium(force=True)
                     if ok_pw:
                         st.success(msg_pw)
